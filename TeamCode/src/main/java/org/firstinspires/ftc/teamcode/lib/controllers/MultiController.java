@@ -17,18 +17,23 @@ public class MultiController<STATE_TYPE, OUTPUT_TYPE> {
 
     private BiFunction<OUTPUT_TYPE, OUTPUT_TYPE, OUTPUT_TYPE> add;
 
+    private OUTPUT_TYPE defaultOutput;
+
     /**
      * @param closedControllers The set of closed controllers
      * @param openControllers The set of open controllers.
      * @param add A lambda adding two members of the output type together. For example, for a double this would look like (a, b) -> a + b
+     * @param defaultOutput The output that is given when no controllers exist.
      */
     public MultiController(List<ClosedController<STATE_TYPE, OUTPUT_TYPE>> closedControllers,
                            List<OpenController<OUTPUT_TYPE>> openControllers,
-                           BiFunction<OUTPUT_TYPE, OUTPUT_TYPE, OUTPUT_TYPE> add) {
+                           BiFunction<OUTPUT_TYPE, OUTPUT_TYPE, OUTPUT_TYPE> add,
+                           OUTPUT_TYPE defaultOutput) {
 
         this.closedControllers = closedControllers;
         this.openControllers = openControllers;
         this.add = add;
+        this.defaultOutput = defaultOutput;
     }
 
     public void update(STATE_TYPE state) {
@@ -56,8 +61,10 @@ public class MultiController<STATE_TYPE, OUTPUT_TYPE> {
                 output = add.apply(output, closedControllers.get(i).getOutput());
             }
             output = add.apply(output, openControllers.get(0).getOutput());
-        } else {
+        } else if (openControllers.size() > 0) {
             output = openControllers.get(0).getOutput();
+        } else {
+            return defaultOutput;
         }
 
         for (int i = 1; i < openControllers.size(); i++) {
