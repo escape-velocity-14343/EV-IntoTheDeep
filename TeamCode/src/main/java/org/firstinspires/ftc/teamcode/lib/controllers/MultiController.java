@@ -6,15 +6,15 @@ import java.util.function.BiFunction;
 /**
  * Wraps any number of closed loop controllers with any number of open loop controllers for easy feedforward.
  */
-public class MultiController<StateT, OutputT> {
+public class MultiController<StateType, OutputType> {
 
-    private List<ClosedController<StateT, OutputT>> closedControllers;
+    private List<ClosedController<StateType, OutputType>> closedControllers;
 
-    private List<OpenController<OutputT>> openControllers;
+    private List<OpenController<OutputType>> openControllers;
 
-    private BiFunction<OutputT, OutputT, OutputT> add;
+    private BiFunction<OutputType, OutputType, OutputType> add;
 
-    private OutputT defaultOutput;
+    private OutputType defaultOutput;
 
     /**
      * @param closedControllers The set of closed controllers
@@ -22,10 +22,10 @@ public class MultiController<StateT, OutputT> {
      * @param add A lambda adding two members of the output type together. For example, for a double this would look like (a, b) -> a + b
      * @param defaultOutput The output that is given when no controllers exist.
      */
-    public MultiController(List<ClosedController<StateT, OutputT>> closedControllers,
-                           List<OpenController<OutputT>> openControllers,
-                           BiFunction<OutputT, OutputT, OutputT> add,
-                           OutputT defaultOutput) {
+    public MultiController(List<ClosedController<StateType, OutputType>> closedControllers,
+                           List<OpenController<OutputType>> openControllers,
+                           BiFunction<OutputType, OutputType, OutputType> add,
+                           OutputType defaultOutput) {
 
         this.closedControllers = closedControllers;
         this.openControllers = openControllers;
@@ -33,25 +33,25 @@ public class MultiController<StateT, OutputT> {
         this.defaultOutput = defaultOutput;
     }
 
-    public void update(StateT state) {
+    public void update(StateType state) {
         for (ClosedController controller : closedControllers) {
             controller.update(state);
         }
     }
 
-    public void update(StateT state, StateT targetState) {
+    public void update(StateType state, StateType targetState) {
         setTargetState(targetState);
         update(state);
     }
 
-    public void setTargetState(StateT state) {
+    public void setTargetState(StateType state) {
         for (ClosedController controller : closedControllers) {
             controller.setTargetState(state);
         }
     }
 
-    public OutputT getOutput() {
-        OutputT output;
+    public OutputType getOutput() {
+        OutputType output;
         if (closedControllers.size() > 0) {
             output = closedControllers.get(0).getOutput();
             for (int i = 1; i < closedControllers.size(); i++) {
