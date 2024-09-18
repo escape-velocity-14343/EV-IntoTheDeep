@@ -3,17 +3,17 @@ package org.firstinspires.ftc.teamcode.lib.controllers;
 /**
  * Generalized closed-loop state feedback controller.
  */
-public abstract class ClosedController<STATE_TYPE, OUTPUT_TYPE> {
+public interface ClosedController<StateT, OutputT> {
 
-    public abstract void update(STATE_TYPE state);
+    void update(StateT state);
 
-    public void update(STATE_TYPE state, STATE_TYPE targetState) {
+    default void update(StateT state, StateT targetState) {
         setTargetState(targetState);
         update(state);
     }
 
-    public abstract void setTargetState(STATE_TYPE state);
+    void setTargetState(StateT state);
 
-    public abstract OUTPUT_TYPE getOutput();
+    OutputT getOutput();
 
 }

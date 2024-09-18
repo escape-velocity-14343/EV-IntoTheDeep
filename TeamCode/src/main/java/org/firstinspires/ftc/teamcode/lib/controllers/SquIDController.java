@@ -4,7 +4,7 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import org.firstinspires.ftc.teamcode.lib.controllers.ClosedController;
 
-public class SquIDController extends ClosedController<Double, Double> {
+public class SquIDController implements ClosedController<Double, Double> {
 
     // im lazy and don't want to bother
     private PIDController internalController;
