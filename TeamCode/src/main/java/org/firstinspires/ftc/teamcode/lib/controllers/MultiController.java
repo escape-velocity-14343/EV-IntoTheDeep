@@ -5,12 +5,14 @@ import java.util.function.BiFunction;
 
 /**
  * Wraps any number of closed loop controllers with any number of open loop controllers for easy feedforward.
+ * @param <StateType> The type of the input to the system (what your sensors read).
+ * @param <OutputType> The type of the output to the system (what your actuators take as input to move).
  */
 public class MultiController<StateType, OutputType> {
 
     private List<ClosedController<StateType, OutputType>> closedControllers;
 
-    private List<OpenController<OutputType>> openControllers;
+    private List<OpenController<StateType, OutputType>> openControllers;
 
     private BiFunction<OutputType, OutputType, OutputType> add;
 
@@ -23,7 +25,7 @@ public class MultiController<StateType, OutputType> {
      * @param defaultOutput The output that is given when no controllers exist.
      */
     public MultiController(List<ClosedController<StateType, OutputType>> closedControllers,
-                           List<OpenController<OutputType>> openControllers,
+                           List<OpenController<StateType, OutputType>> openControllers,
                            BiFunction<OutputType, OutputType, OutputType> add,
                            OutputType defaultOutput) {
 
@@ -35,6 +37,9 @@ public class MultiController<StateType, OutputType> {
 
     public void update(StateType state) {
         for (ClosedController controller : closedControllers) {
+            controller.update(state);
+        }
+        for (OpenController controller : openControllers) {
             controller.update(state);
         }
     }

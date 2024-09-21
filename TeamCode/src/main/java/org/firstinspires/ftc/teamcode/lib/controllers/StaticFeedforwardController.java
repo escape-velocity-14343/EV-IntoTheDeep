@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.lib.controllers;
 
 import androidx.annotation.Nullable;
 
-public class StaticFeedforwardController implements OpenController<Double> {
+public class StaticFeedforwardController implements OpenController<Double, Double> {
     private double kF;
 
     public StaticFeedforwardController(double kf) {
